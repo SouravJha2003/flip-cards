@@ -1,90 +1,387 @@
-// Wait for the DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function () {
+// Memory Card Game
+class MemoryCardGame {
+    constructor() {
+        this.gameState = {
+            isPlaying: false,
+            flippedCards: [],
+            matchedPairs: 0,
+            totalPairs: 0,
+            flipCount: 0,
+            startTime: null,
+            timer: null
+        };
 
-    // Get DOM elements
-    const changeColorBtn = document.getElementById('changeColorBtn');
-    const title = document.querySelector('.title');
-    const subtitle = document.querySelector('.subtitle');
-    const flipCard = document.querySelector('.flip-card');
+        this.cards = [];
+        this.playerName = '';
+        this.pairCount = 5;
 
-    // Array of color combinations for the background
-    const colorSchemes = [
-        { primary: '#667eea', secondary: '#764ba2' },
-        { primary: '#f093fb', secondary: '#f5576c' },
-        { primary: '#4facfe', secondary: '#00f2fe' },
-        { primary: '#43e97b', secondary: '#38f9d7' },
-        { primary: '#fa709a', secondary: '#fee140' }
-    ];
-
-    let currentColorIndex = 0;
-
-    // Function to change background colors
-    function changeColors() {
-        currentColorIndex = (currentColorIndex + 1) % colorSchemes.length;
-        const colors = colorSchemes[currentColorIndex];
-
-        document.body.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`;
-
-        // Add a subtle animation effect
-        title.style.transform = 'scale(1.1)';
-        setTimeout(() => {
-            title.style.transform = 'scale(1)';
-        }, 200);
+        this.initializeElements();
+        this.bindEvents();
     }
 
-    // Add click event to the button
-    changeColorBtn.addEventListener('click', changeColors);
+    initializeElements() {
+        this.playerNameInput = document.getElementById('playerName');
+        this.pairCountSelect = document.getElementById('pairCount');
+        this.startGameBtn = document.getElementById('startGameBtn');
+        this.gameModal = document.getElementById('gameModal');
+        this.successModal = document.getElementById('successModal');
+        this.gameBoard = document.getElementById('gameBoard');
+        this.gamePlayerName = document.getElementById('gamePlayerName');
+        this.flipCountElement = document.getElementById('flipCount');
+        this.gameTimerElement = document.getElementById('gameTimer');
+        this.closeGameBtn = document.getElementById('closeGameBtn');
+        this.backToMenuBtn = document.getElementById('backToMenuBtn');
 
-    // Add click event to the flip card for additional interaction
-    flipCard.addEventListener('click', function () {
-        // Add a bounce effect
-        this.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            this.style.transform = 'scale(1)';
-        }, 150);
+        // Success modal elements
+        this.successPlayerName = document.getElementById('successPlayerName');
+        this.successTime = document.getElementById('successTime');
+        this.successFlips = document.getElementById('successFlips');
+        this.successPairs = document.getElementById('successPairs');
+        this.playAgainBtn = document.getElementById('playAgainBtn');
+        this.backToMenuSuccessBtn = document.getElementById('backToMenuSuccessBtn');
+    }
 
-        // Update subtitle text randomly
-        const randomMessages = [
-            'Welcome to my simple page',
-            'Click the card to see it flip!',
-            'Try the color changing button!',
-            'Hello World is awesome!',
-            'Welcome to the flip-cards demo!'
-        ];
+    bindEvents() {
+        this.startGameBtn.addEventListener('click', () => this.startGame());
+        this.closeGameBtn.addEventListener('click', () => this.closeGame());
+        this.backToMenuBtn.addEventListener('click', () => this.backToMenu());
 
-        const randomIndex = Math.floor(Math.random() * randomMessages.length);
-        subtitle.textContent = randomMessages[randomIndex];
+        // Success modal events
+        this.playAgainBtn.addEventListener('click', () => this.playAgain());
+        this.backToMenuSuccessBtn.addEventListener('click', () => this.backToMenuFromSuccess());
 
-        // Add a fade effect to the subtitle
-        subtitle.style.opacity = '0';
-        setTimeout(() => {
-            subtitle.style.opacity = '1';
-        }, 100);
-    });
+        // Close modal when clicking outside
+        this.gameModal.addEventListener('click', (e) => {
+            if (e.target === this.gameModal) {
+                this.closeGame();
+            }
+        });
 
-    // Add some initial animation when page loads
-    setTimeout(() => {
-        title.style.opacity = '0';
-        title.style.transform = 'translateY(-20px)';
+        this.successModal.addEventListener('click', (e) => {
+            if (e.target === this.successModal) {
+                this.closeSuccessModal();
+            }
+        });
+    }
 
-        setTimeout(() => {
-            title.style.transition = 'all 0.8s ease';
-            title.style.opacity = '1';
-            title.style.transform = 'translateY(0)';
-        }, 100);
-    }, 500);
-
-    // Add keyboard support
-    document.addEventListener('keydown', function (event) {
-        if (event.code === 'Space') {
-            event.preventDefault();
-            changeColors();
-        } else if (event.code === 'Enter') {
-            flipCard.click();
+    startGame() {
+        const playerName = this.playerNameInput.value.trim();
+        if (!playerName) {
+            alert('Please enter your name!');
+            return;
         }
-    });
 
-    // Add some console logging for fun
-    console.log('Hello World! Welcome to the flip-cards demo!');
-    console.log('Press SPACE to change colors, ENTER to flip the card!');
+        this.playerName = playerName;
+        this.pairCount = parseInt(this.pairCountSelect.value);
+        this.gameState.totalPairs = this.pairCount;
+
+        this.showGameModal();
+        this.initializeGame();
+    }
+
+    showGameModal() {
+        this.gameModal.style.display = 'block';
+        this.gamePlayerName.textContent = this.playerName;
+    }
+
+    closeGame() {
+        this.gameModal.style.display = 'none';
+        this.stopTimer();
+        this.resetGame();
+    }
+
+    backToMenu() {
+        this.closeGame();
+        this.resetGame();
+    }
+
+    newGame() {
+        this.resetGame();
+        this.initializeGame();
+    }
+
+    initializeGame() {
+        this.gameState.isPlaying = true;
+        this.gameState.flippedCards = [];
+        this.gameState.matchedPairs = 0;
+        this.gameState.flipCount = 0;
+        this.gameState.startTime = Date.now();
+
+        this.createCards();
+        this.shuffleCards();
+        this.renderGameBoard();
+        this.startTimer();
+        this.updateDisplay();
+    }
+
+    createCards() {
+        this.cards = [];
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        for (let i = 0; i < this.pairCount; i++) {
+            const letter = alphabet[i];
+            // Create two cards with the same letter
+            this.cards.push({
+                id: `card-${i}-1`,
+                letter: letter,
+                isFlipped: false,
+                isMatched: false
+            });
+            this.cards.push({
+                id: `card-${i}-2`,
+                letter: letter,
+                isFlipped: false,
+                isMatched: false
+            });
+        }
+    }
+
+    shuffleCards() {
+        // Fisher-Yates shuffle algorithm
+        for (let i = this.cards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+        }
+    }
+
+    renderGameBoard() {
+        this.gameBoard.innerHTML = '';
+
+        // Set grid class based on pair count
+        this.gameBoard.className = `game-board grid-${this.pairCount}`;
+
+        this.cards.forEach(card => {
+            const cardElement = this.createCardElement(card);
+            this.gameBoard.appendChild(cardElement);
+        });
+    }
+
+    createCardElement(card) {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = `card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''}`;
+        cardDiv.dataset.id = card.id;
+
+        cardDiv.innerHTML = `
+            <div class="card-inner">
+                <div class="card-front">?</div>
+                <div class="card-back">${card.letter}</div>
+            </div>
+        `;
+
+        cardDiv.addEventListener('click', () => this.flipCard(card.id));
+
+        return cardDiv;
+    }
+
+    flipCard(cardId) {
+        if (!this.gameState.isPlaying) return;
+
+        const card = this.cards.find(c => c.id === cardId);
+        if (!card || card.isFlipped || card.isMatched) return;
+
+        // Flip the card
+        card.isFlipped = true;
+
+        // Add to flipped cards
+        this.gameState.flippedCards.push(card);
+
+        // Update display
+        this.updateCardDisplay(cardId);
+
+        // Check if we have two flipped cards
+        if (this.gameState.flippedCards.length === 2) {
+            // Count this as one step (two flips = one step)
+            this.gameState.flipCount++;
+            this.updateDisplay();
+            this.checkMatch();
+        }
+    }
+
+    checkMatch() {
+        const [card1, card2] = this.gameState.flippedCards;
+
+        if (card1.letter === card2.letter) {
+            // Match found!
+            card1.isMatched = true;
+            card2.isMatched = true;
+            this.gameState.matchedPairs++;
+
+            // Update display
+            this.updateCardDisplay(card1.id);
+            this.updateCardDisplay(card2.id);
+
+            // Check if game is complete
+            if (this.gameState.matchedPairs === this.gameState.totalPairs) {
+                this.gameComplete();
+            }
+        } else {
+            // No match, flip cards back after delay
+            setTimeout(() => {
+                card1.isFlipped = false;
+                card2.isFlipped = false;
+
+                this.updateCardDisplay(card1.id);
+                this.updateCardDisplay(card2.id);
+            }, 1000);
+        }
+
+        // Reset flipped cards
+        this.gameState.flippedCards = [];
+    }
+
+    updateCardDisplay(cardId) {
+        const cardElement = document.querySelector(`[data-id="${cardId}"]`);
+        if (cardElement) {
+            const card = this.cards.find(c => c.id === cardId);
+            cardElement.className = `card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''}`;
+        }
+    }
+
+    updateDisplay() {
+        this.flipCountElement.textContent = this.gameState.flipCount;
+    }
+
+    startTimer() {
+        this.gameState.timer = setInterval(() => {
+            if (this.gameState.startTime) {
+                const elapsed = Date.now() - this.gameState.startTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                this.gameTimerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (this.gameState.timer) {
+            clearInterval(this.gameState.timer);
+            this.gameState.timer = null;
+        }
+    }
+
+    gameComplete() {
+        this.gameState.isPlaying = false;
+        this.stopTimer();
+
+        const totalTime = this.gameTimerElement.textContent;
+        const totalSteps = this.gameState.flipCount;
+        const totalPairs = this.gameState.totalPairs;
+
+        // Calculate performance rating
+        const performanceRating = this.calculatePerformanceRating(totalSteps, totalPairs);
+
+        // Update success modal with final stats
+        this.successPlayerName.textContent = this.playerName;
+        this.successTime.textContent = totalTime;
+        this.successFlips.textContent = totalSteps;
+        this.successPairs.textContent = totalPairs;
+
+        // Update success message based on performance
+        this.updateSuccessMessage(performanceRating, totalSteps, totalPairs);
+
+        // Hide game modal and show success modal
+        this.gameModal.style.display = 'none';
+        this.showSuccessModal();
+    }
+
+    calculatePerformanceRating(steps, pairs) {
+        const ratio = steps / pairs;
+
+        if (ratio <= 1) {
+            return 'excellent';
+        } else if (ratio <= 2) {
+            return 'good';
+        } else if (ratio <= 3) {
+            return 'average';
+        } else {
+            return 'bad';
+        }
+    }
+
+    updateSuccessMessage(rating, steps, pairs) {
+        const successMessage = document.querySelector('.success-message');
+
+        let messageHTML = '';
+
+        switch (rating) {
+            case 'excellent':
+                messageHTML = `
+                    <p>🏆 EXCELLENT PERFORMANCE! 🏆</p>
+                    <p>You're a memory genius! Perfect score!</p>
+                `;
+                break;
+            case 'good':
+                messageHTML = `
+                    <p>🎯 GREAT JOB! 🎯</p>
+                    <p>You have excellent memory skills!</p>
+                `;
+                break;
+            case 'average':
+                messageHTML = `
+                    <p>👍 GOOD EFFORT! 👍</p>
+                    <p>You did well! Keep practicing to improve.</p>
+                `;
+                break;
+            case 'bad':
+                messageHTML = `
+                    <p>💪 KEEP PRACTICING! 💪</p>
+                    <p>Don't worry, memory improves with practice!</p>
+                `;
+                break;
+        }
+
+        // Add improvement suggestion if steps > 2x pairs
+        if (steps > pairs * 2) {
+            messageHTML += `
+                <div class="improvement-tip">
+                    <p>💡 <strong>Improvement Tip:</strong></p>
+                    <p>Try to remember card positions better. Take your time and focus!</p>
+                </div>
+            `;
+        }
+
+        successMessage.innerHTML = messageHTML;
+    }
+
+    showSuccessModal() {
+        this.successModal.style.display = 'block';
+    }
+
+    closeSuccessModal() {
+        this.successModal.style.display = 'none';
+    }
+
+    playAgain() {
+        this.closeSuccessModal();
+        this.resetGame();
+        this.initializeGame();
+        this.showGameModal();
+    }
+
+    backToMenuFromSuccess() {
+        this.closeSuccessModal();
+        this.resetGame();
+    }
+
+    resetGame() {
+        this.gameState.isPlaying = false;
+        this.gameState.flippedCards = [];
+        this.gameState.matchedPairs = 0;
+        this.gameState.totalPairs = 0;
+        this.gameState.flipCount = 0;
+        this.gameState.startTime = null;
+        this.stopTimer();
+
+        this.cards = [];
+        this.gameBoard.innerHTML = '';
+        this.gameBoard.className = 'game-board';
+
+        this.updateDisplay();
+        this.gameTimerElement.textContent = '00:00';
+    }
+}
+
+// Initialize the game when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new MemoryCardGame();
 });

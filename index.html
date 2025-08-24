@@ -4,26 +4,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World - Flip Cards</title>
+    <title>Memory Card Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="container">
-        <h1 class="title">Hello World!</h1>
-        <p class="subtitle">Welcome to my simple page</p>
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <h2>Click Me!</h2>
+        <h1 class="title">Memory Card Game</h1>
+        <p class="subtitle">Test your memory by matching pairs of cards!</p>
+
+        <div class="game-setup">
+            <div class="input-group">
+                <label for="playerName">Your Name:</label>
+                <input type="text" id="playerName" placeholder="Enter your name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="pairCount">Number of Pairs:</label>
+                <select id="pairCount">
+                    <option value="5">5 pairs (10 cards)</option>
+                    <option value="10">10 pairs (20 cards)</option>
+                    <option value="15">15 pairs (30 cards)</option>
+                    <option value="20">20 pairs (40 cards)</option>
+                    <option value="26">26 pairs (52 cards)</option>
+                </select>
+            </div>
+
+            <button id="startGameBtn" class="btn">Start Game</button>
+        </div>
+    </div>
+
+    <!-- Game Modal -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <div class="game-header">
+                <div class="player-info">
+                    <h2 id="gamePlayerName">Player</h2>
                 </div>
-                <div class="flip-card-back">
-                    <h2>Hello from the back!</h2>
-                    <p>This is a simple flip card effect</p>
+                <div class="game-stats">
+                    <span>Steps: <span id="flipCount">0</span></span>
+                    <span>Time: <span id="gameTimer">00:00</span></span>
                 </div>
+                <button id="closeGameBtn" class="close-btn">×</button>
+            </div>
+
+            <div id="gameBoard" class="game-board">
+                <!-- Cards will be generated here -->
+            </div>
+
+            <div class="game-controls">
+                <button id="backToMenuBtn" class="btn">Back to Menu</button>
             </div>
         </div>
-        <button id="changeColorBtn" class="btn">Change Color</button>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content success-content">
+            <div class="success-header">
+                <h1 class="success-title">🎉 HURRAY! 🎉</h1>
+                <p class="success-subtitle">You've completed the memory challenge!</p>
+            </div>
+
+            <div class="success-body">
+                <div class="celebration-animation">
+                    <div class="confetti confetti-1"></div>
+                    <div class="confetti confetti-2"></div>
+                    <div class="confetti confetti-3"></div>
+                    <div class="confetti confetti-4"></div>
+                    <div class="confetti confetti-5"></div>
+                    <div class="confetti confetti-6"></div>
+                    <div class="confetti confetti-7"></div>
+                    <div class="confetti confetti-8"></div>
+                </div>
+
+                <div class="final-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Player:</span>
+                        <span class="stat-value" id="successPlayerName">Player</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Time:</span>
+                        <span class="stat-value" id="successTime">00:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Steps:</span>
+                        <span class="stat-value" id="successFlips">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pairs Matched:</span>
+                        <span class="stat-value" id="successPairs">0</span>
+                    </div>
+                </div>
+
+                <div class="success-message">
+                    <p>🎯 Amazing memory skills! 🧠</p>
+                    <p>You've proven yourself as a memory master!</p>
+                </div>
+            </div>
+
+            <div class="success-controls">
+                <button id="playAgainBtn" class="btn success-btn">Play Again</button>
+                <button id="backToMenuSuccessBtn" class="btn success-btn">Back to Menu</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
