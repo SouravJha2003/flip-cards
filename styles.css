@@ -231,7 +231,10 @@ body::before {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
-    margin: 2% auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     padding: 0;
     border-radius: 25px;
     width: 95%;
@@ -669,33 +672,91 @@ body::before {
         padding: 2rem;
         margin: 1rem;
         border-radius: 20px;
+        max-width: 90vw;
+        width: 95%;
     }
 
     .title {
         font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .game-setup {
+        gap: 1.2rem;
+    }
+
+    .input-group {
+        gap: 0.4rem;
+    }
+
+    .input-group label {
+        font-size: 0.9rem;
+    }
+
+    .input-group input,
+    .input-group select {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        border-radius: 12px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+        border-radius: 20px;
     }
 
     .modal-content {
-        margin: 5% auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: 95%;
         border-radius: 20px;
+        max-height: 90vh;
     }
 
     .game-header {
         border-radius: 20px 20px 0 0;
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
     }
 
-    .game-controls {
-        border-radius: 0 0 20px 20px;
+    .player-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.3rem;
     }
 
-    .success-controls {
-        border-radius: 0 0 20px 20px;
+    .game-stats {
+        gap: 1.5rem;
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .close-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
     }
 
     .game-board {
-        padding: 1rem;
-        gap: 0.5rem;
+        padding: 1.5rem;
+        gap: 0.8rem;
+        min-height: 300px;
+    }
+
+    .game-controls {
+        padding: 1.5rem;
+        gap: 0.8rem;
+        border-radius: 0 0 20px 20px;
     }
 
     .card {
@@ -704,12 +765,17 @@ body::before {
         border-radius: 12px;
     }
 
+    .card:hover {
+        transform: scale(1.05) translateY(-3px);
+    }
+
     .card-front,
     .card-back {
         font-size: 1.2rem;
         border-radius: 12px;
     }
 
+    /* Responsive Grid for Mobile - Limited to 5-6 columns */
     .game-board.grid-5 {
         grid-template-columns: repeat(5, 60px);
         grid-template-rows: repeat(2, 75px);
@@ -721,46 +787,580 @@ body::before {
     }
 
     .game-board.grid-15 {
-        grid-template-columns: repeat(6, 60px);
-        grid-template-rows: repeat(5, 75px);
+        grid-template-columns: repeat(5, 60px);
+        grid-template-rows: repeat(6, 75px);
     }
 
     .game-board.grid-20 {
-        grid-template-columns: repeat(8, 60px);
-        grid-template-rows: repeat(5, 75px);
+        grid-template-columns: repeat(5, 60px);
+        grid-template-rows: repeat(8, 75px);
     }
 
     .game-board.grid-26 {
-        grid-template-columns: repeat(10, 60px);
-        grid-template-rows: repeat(6, 75px);
+        grid-template-columns: repeat(6, 60px);
+        grid-template-rows: repeat(9, 75px);
     }
-}
 
-@media (max-width: 480px) {
-    .title {
-        font-size: 2rem;
+    /* Success Modal Mobile Adjustments */
+    .success-content {
+        max-width: 95vw;
+        border-radius: 20px;
+    }
+
+    .success-header {
+        padding: 2rem 1.5rem 1rem;
     }
 
     .success-title {
         font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .success-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .success-body {
+        padding: 1rem 1.5rem;
+    }
+
+    .final-stats {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 15px;
+    }
+
+    .stat-item {
+        margin-bottom: 0.8rem;
+        padding: 0.4rem 0;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+
+    .success-controls {
+        padding: 1.5rem;
+        gap: 0.8rem;
+        border-radius: 0 0 20px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem;
+        margin: 0.5rem;
+        border-radius: 15px;
+        max-width: 95vw;
+    }
+
+    .title {
+        font-size: 2rem;
+        margin-bottom: 0.6rem;
+        letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .game-setup {
+        gap: 1rem;
+    }
+
+    .input-group {
+        gap: 0.3rem;
+    }
+
+    .input-group label {
+        font-size: 0.85rem;
+    }
+
+    .input-group input,
+    .input-group select {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        border-radius: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        border-radius: 18px;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 98%;
+        border-radius: 15px;
+        max-height: 96vh;
+    }
+
+    .game-header {
+        border-radius: 15px 15px 0 0;
+        padding: 1.2rem;
+        gap: 0.8rem;
+    }
+
+    .player-info h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .game-stats {
+        gap: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .close-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+    }
+
+    .game-board {
+        padding: 1rem;
+        gap: 0.6rem;
+        min-height: 250px;
+    }
+
+    .game-controls {
+        padding: 1rem;
+        gap: 0.6rem;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .card {
+        width: 50px;
+        height: 62.5px;
+        border-radius: 10px;
+    }
+
+    .card:hover {
+        transform: scale(1.03) translateY(-2px);
+    }
+
+    .card-front,
+    .card-back {
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+
+    /* Responsive Grid for Small Mobile - Limited to 5-6 columns */
+    .game-board.grid-5 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(2, 62.5px);
+    }
+
+    .game-board.grid-10 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(4, 62.5px);
+    }
+
+    .game-board.grid-15 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(6, 62.5px);
+    }
+
+    .game-board.grid-20 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(8, 62.5px);
+    }
+
+    .game-board.grid-26 {
+        grid-template-columns: repeat(6, 50px);
+        grid-template-rows: repeat(9, 62.5px);
+    }
+
+    /* Success Modal Small Mobile Adjustments */
+    .success-content {
+        max-width: 98vw;
+        border-radius: 15px;
+    }
+
+    .success-header {
+        padding: 1.5rem 1rem 0.8rem;
+    }
+
+    .success-title {
+        font-size: 2rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .success-subtitle {
+        font-size: 1rem;
+    }
+
+    .success-body {
+        padding: 0.8rem 1rem;
+    }
+
+    .celebration-animation {
+        height: 80px;
+        margin: 1.5rem 0;
+    }
+
+    .final-stats {
+        padding: 1.2rem;
+        margin: 1.2rem 0;
+        border-radius: 12px;
+    }
+
+    .stat-item {
+        margin-bottom: 0.6rem;
+        padding: 0.3rem 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+    }
+
+    .success-message {
+        margin: 1.5rem 0;
+    }
+
+    .success-message p {
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .success-controls {
+        padding: 1rem;
+        gap: 0.6rem;
+        border-radius: 0 0 15px 15px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 1rem;
+        margin: 0.3rem;
+        border-radius: 12px;
+    }
+
+    .title {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .game-setup {
+        gap: 0.8rem;
+    }
+
+    .input-group {
+        gap: 0.25rem;
+    }
+
+    .input-group label {
+        font-size: 0.8rem;
+    }
+
+    .input-group input,
+    .input-group select {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        border-radius: 8px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 99%;
+        border-radius: 12px;
+    }
+
+    .game-header {
+        border-radius: 12px 12px 0 0;
+        padding: 1rem;
+        gap: 0.6rem;
+    }
+
+    .player-info h2 {
+        font-size: 1.2rem;
+    }
+
+    .game-stats {
+        gap: 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .close-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+
+    .game-board {
+        padding: 0.8rem;
+        gap: 0.5rem;
+        min-height: 200px;
+    }
+
+    .game-controls {
+        padding: 0.8rem;
+        gap: 0.5rem;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .card {
+        width: 45px;
+        height: 56.25px;
+        border-radius: 8px;
+    }
+
+    .card-front,
+    .card-back {
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+
+    /* Responsive Grid for Very Small Mobile - Limited to 5-6 columns */
+    .game-board.grid-5 {
+        grid-template-columns: repeat(5, 45px);
+        grid-template-rows: repeat(2, 56.25px);
+    }
+
+    .game-board.grid-10 {
+        grid-template-columns: repeat(5, 45px);
+        grid-template-rows: repeat(4, 56.25px);
+    }
+
+    .game-board.grid-15 {
+        grid-template-columns: repeat(5, 45px);
+        grid-template-rows: repeat(6, 56.25px);
+    }
+
+    .game-board.grid-20 {
+        grid-template-columns: repeat(5, 45px);
+        grid-template-rows: repeat(8, 56.25px);
+    }
+
+    .game-board.grid-26 {
+        grid-template-columns: repeat(6, 45px);
+        grid-template-rows: repeat(9, 56.25px);
+    }
+
+    /* Success Modal Very Small Mobile Adjustments */
+    .success-content {
+        max-width: 99vw;
+        border-radius: 12px;
+    }
+
+    .success-header {
+        padding: 1.2rem 0.8rem 0.6rem;
+    }
+
+    .success-title {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .success-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .success-body {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .celebration-animation {
+        height: 70px;
+        margin: 1.2rem 0;
+    }
+
+    .final-stats {
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 10px;
+    }
+
+    .stat-item {
+        margin-bottom: 0.5rem;
+        padding: 0.25rem 0;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+    }
+
+    .stat-value {
+        font-size: 0.9rem;
+    }
+
+    .success-message {
+        margin: 1.2rem 0;
+    }
+
+    .success-message p {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .success-controls {
+        padding: 0.8rem;
+        gap: 0.5rem;
+        border-radius: 0 0 12px 12px;
+    }
+}
+
+/* Landscape Mobile Optimization */
+@media (max-height: 500px) and (orientation: landscape) {
+    .container {
+        padding: 1rem;
+        margin: 0.5rem;
+        max-width: 80vw;
+    }
+
+    .title {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .game-setup {
+        gap: 0.8rem;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 98vh;
     }
 
     .game-header {
         padding: 1rem;
-        flex-direction: column;
-        gap: 1rem;
     }
 
-    .game-stats {
-        flex-direction: column;
-        gap: 0.5rem;
-        text-align: center;
+    .game-board {
+        padding: 1rem;
+        min-height: 200px;
     }
 
-    .game-controls,
-    .success-controls {
-        flex-direction: column;
-        align-items: center;
+    .game-controls {
+        padding: 1rem;
+    }
+
+    .card {
+        width: 50px;
+        height: 62.5px;
+    }
+
+    .card-front,
+    .card-back {
+        font-size: 1rem;
+    }
+
+    /* Landscape Grid Adjustments - Limited to 5-6 columns */
+    .game-board.grid-5 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(2, 62.5px);
+    }
+
+    .game-board.grid-10 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(4, 62.5px);
+    }
+
+    .game-board.grid-15 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(6, 62.5px);
+    }
+
+    .game-board.grid-20 {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(8, 62.5px);
+    }
+
+    .game-board.grid-26 {
+        grid-template-columns: repeat(6, 50px);
+        grid-template-rows: repeat(9, 62.5px);
+    }
+}
+
+/* High DPI Mobile Devices */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .card {
+        border-width: 0.5px;
+    }
+
+    .container {
+        border-width: 0.5px;
+    }
+
+    .modal-content {
+        border-width: 0.5px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .card:hover {
+        transform: none;
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+
+    .close-btn:hover {
+        transform: none;
+    }
+
+    .success-btn:hover {
+        transform: none;
+    }
+
+    /* Increase touch targets */
+    .card {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .close-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .input-group input,
+    .input-group select {
+        min-height: 44px;
     }
 }
 
