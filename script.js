@@ -104,6 +104,7 @@ class MemoryCardGame {
         this.gameState.isPlaying = true;
         this.gameState.flippedCards = [];
         this.gameState.matchedPairs = 0;
+        this.gameState.totalPairs = this.pairCount;
         this.gameState.flipCount = 0;
         this.gameState.startTime = Date.now();
 
@@ -242,8 +243,11 @@ class MemoryCardGame {
     }
 
     startTimer() {
+        // Clear any existing timer first
+        this.stopTimer();
+        
         this.gameState.timer = setInterval(() => {
-            if (this.gameState.startTime) {
+            if (this.gameState.startTime && this.gameState.isPlaying) {
                 const elapsed = Date.now() - this.gameState.startTime;
                 const minutes = Math.floor(elapsed / 60000);
                 const seconds = Math.floor((elapsed % 60000) / 1000);
@@ -252,20 +256,27 @@ class MemoryCardGame {
         }, 1000);
     }
 
-    stopTimer() {
+    stopTimer(resetDisplay = true) {
         if (this.gameState.timer) {
             clearInterval(this.gameState.timer);
             this.gameState.timer = null;
+        }
+        // Only reset the timer display if explicitly requested
+        if (resetDisplay && this.gameTimerElement) {
+            this.gameTimerElement.textContent = '00:00';
         }
     }
 
     gameComplete() {
         this.gameState.isPlaying = false;
-        this.stopTimer();
-
+        
+        // Capture the final time BEFORE stopping the timer
         const totalTime = this.gameTimerElement.textContent;
         const totalSteps = this.gameState.flipCount;
         const totalPairs = this.gameState.totalPairs;
+        
+        // Now stop the timer without resetting the display
+        this.stopTimer(false);
 
         // Calculate performance rating
         const performanceRating = this.calculatePerformanceRating(totalSteps, totalPairs);
@@ -354,8 +365,19 @@ class MemoryCardGame {
     playAgain() {
         this.closeSuccessModal();
         this.resetGame();
-        this.initializeGame();
-        this.showGameModal();
+        // Ensure timer is completely stopped and reset
+        this.stopTimer();
+        // Reset the flip count display
+        this.flipCountElement.textContent = '0';
+        // Ensure we have the correct pair count before initializing
+        if (this.pairCount && this.pairCount > 0) {
+            this.initializeGame();
+            this.showGameModal();
+        } else {
+            // Fallback: go back to main menu if pair count is invalid
+            console.warn('Invalid pair count, returning to main menu');
+            this.backToMenuFromSuccess();
+        }
     }
 
     backToMenuFromSuccess() {
@@ -377,7 +399,6 @@ class MemoryCardGame {
         this.gameBoard.className = 'game-board';
 
         this.updateDisplay();
-        this.gameTimerElement.textContent = '00:00';
     }
 }
 
@@ -385,3 +406,4 @@ class MemoryCardGame {
 document.addEventListener('DOMContentLoaded', () => {
     new MemoryCardGame();
 });
+
